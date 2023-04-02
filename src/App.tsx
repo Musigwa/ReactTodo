@@ -2,15 +2,16 @@ import { TiDelete } from 'react-icons/ti';
 import { BsCheck2Circle } from 'react-icons/bs';
 import { RiCheckboxBlankCircleLine } from 'react-icons/ri';
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Todo } from './interfaces';
 import { Circles } from 'react-loader-spinner';
+import { capitalize } from './utils';
 
 const baseUrl = 'https://jsonplaceholder.typicode.com/todos';
 const headers = { 'Content-type': 'application/json; charset=UTF-8' };
 
 const App = () => {
-  const [text, setText] = useState<string>('');
+  const [title, setTitle] = useState<string>('');
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -34,7 +35,7 @@ const App = () => {
   const createTodo = async () => {
     try {
       setLoading(true);
-      const newTodo = { title: text, completed: false };
+      const newTodo = { title: title, completed: false };
       const response = await fetch(baseUrl, {
         method: 'POST',
         body: JSON.stringify(newTodo),
@@ -42,6 +43,7 @@ const App = () => {
       });
       const createdTodo = await response.json();
       setTodos([...todos, createdTodo]);
+      setTitle('');
     } catch (error) {
       console.error(error);
       setError(error as Error);
@@ -87,7 +89,7 @@ const App = () => {
   };
 
   const handleTextChange = ({ target }: { target: { value: string } }) => {
-    setText(target.value);
+    setTitle(target.value);
   };
 
   const handleSort = (column: string) => {
@@ -106,7 +108,7 @@ const App = () => {
         comparison = a.id - b.id;
       } else if (sortColumn === 'completed') {
         comparison = Number(a.completed) - Number(b.completed);
-      } else if (sortColumn === 'text') {
+      } else if (sortColumn === 'title') {
         comparison = a.title.localeCompare(b.title);
       }
       return sortDirection === 'asc' ? comparison : -comparison;
@@ -118,55 +120,79 @@ const App = () => {
     fetchTodos();
   }, []);
 
+  const canSubmit = useMemo(() => title.length >= 3, [title]);
+
   return (
-    <div className='App'>
-      {loading ? (
-        <Circles color='#00BFFF' height={100} width={100} wrapperClass='centered-content' />
-      ) : (
-        <>
-          <header className='appbar-root'>
-            <h1 className='appbar-title'>Todo App</h1>
-            <input placeholder='Add new todo...' onChange={handleTextChange} value={text} />
-            <button className={text.length ? '' : 'button-disabled'} onClick={createTodo}>
-              Add Todo
-            </button>
-          </header>
-          <table>
-            <tr>
-              <th onClick={() => handleSort('id')}>ID</th>
-              <th onClick={() => handleSort('text')}>Name</th>
-              <th onClick={() => handleSort('completed')}>Status</th>
-              <th>Delete</th>
-            </tr>
-            {getSortedData().map(({ completed, id, title }, index) => {
-              return (
-                <tr key={`${index}${id}`} onClick={() => markTodoAsCompleted(id)}>
-                  <td style={{ textDecoration: completed ? 'line-through' : 'none' }}>{id}</td>
-                  <td style={{ textDecoration: completed ? 'line-through' : 'none' }}>{title}</td>
-                  <td>
-                    {completed ? (
-                      <BsCheck2Circle
-                        className='completed'
-                        size={25}
-                        onClick={() => markTodoAsCompleted(id)}
-                      />
-                    ) : (
-                      <RiCheckboxBlankCircleLine
-                        className=''
-                        size={25}
-                        onClick={() => markTodoAsCompleted(id)}
-                      />
-                    )}
-                  </td>
-                  <td>
-                    <TiDelete size={25} className='delete-btn' onClick={() => deleteTodo(id)} />
-                  </td>
-                </tr>
-              );
-            })}
-          </table>
-        </>
-      )}
+    <div className='App' data-testid='my-app'>
+      <header className='appbar-root' data-testid='app-header'>
+        {loading ? (
+          <Circles
+            height={100}
+            width={100}
+            wrapperClass='app-loader centered-content'
+            data-testid='app-loader'
+          />
+        ) : null}
+        <h1 className='appbar-title'>Todo App</h1>
+        <input
+          data-testid='todo-input'
+          placeholder={capitalize('Add new todo...')}
+          onChange={handleTextChange}
+          value={capitalize(title)}
+        />
+        <button
+          data-testid='add-todo-button'
+          className={`${canSubmit ? '' : 'button-disabled'} button`}
+          onClick={createTodo}
+          disabled={!canSubmit}
+        >
+          Add Todo
+        </button>
+      </header>
+      <table data-testid='todo-list'>
+        <thead>
+          <tr>
+            <th onClick={() => handleSort('id')}>ID</th>
+            <th onClick={() => handleSort('title')}>Name</th>
+            <th onClick={() => handleSort('completed')}>Status</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        {getSortedData().map(({ completed, id, title }, index) => {
+          return (
+            <tbody>
+              <tr key={`${index}${id}`}>
+                <td style={{ textDecoration: completed ? 'line-through' : 'none' }}>{id}</td>
+                <td style={{ textDecoration: completed ? 'line-through' : 'none' }}>
+                  {capitalize(title)}
+                </td>
+                <td>
+                  {completed ? (
+                    <BsCheck2Circle
+                      className={`completed button`}
+                      size={25}
+                      onClick={() => markTodoAsCompleted(id)}
+                    />
+                  ) : (
+                    <RiCheckboxBlankCircleLine
+                      className={`button`}
+                      size={25}
+                      onClick={() => markTodoAsCompleted(id)}
+                    />
+                  )}
+                </td>
+                <td>
+                  <TiDelete
+                    size={25}
+                    className={`delete-btn button`}
+                    onClick={() => deleteTodo(id)}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          );
+        })}
+      </table>
     </div>
   );
 };

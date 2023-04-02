@@ -30,12 +30,11 @@ input {
   box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
   outline: none;
   font-size: inherit;
-  text-transform: capitalize;
 }
 
 button {
   padding: 10px;
-  margin: 0px 10px;
+  margin: 10px;
   border: 2px solid transparent;
   border-radius: 0.5rem;
   box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
@@ -74,6 +73,10 @@ th {
   cursor: pointer;
 }
 
+th:last-child() {
+  cursor: auto;
+}
+
 td:nth-child(2) {
   text-align: left;
 }
@@ -92,7 +95,6 @@ td {
   padding: 10px;
   text-align: center;
   color: --color-accent;
-  cursor: pointer;
 }
 
 .App {
@@ -104,7 +106,7 @@ td {
 }
 .loader {
   border: 16px solid #f3f3f3;
-  border-top: 16px solid #3498db;
+  border-top: 16px solid var(--color-on-primary);
   border-radius: 50%;
   width: 130px;
   height: 130px;
@@ -114,11 +116,22 @@ td {
   justify-content: center;
 }
 
+.button {
+  cursor: pointer;
+}
+
 .centered-content {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
+  position: absolute;
+  z-index: 10000;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 @keyframes spin {
@@ -127,5 +140,41 @@ td {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+/* iPads (portrait) */
+@media only screen and (max-width: 1024px) {
+  input {
+    width: 65%;
+  }
+
+  table {
+    width: 85%;
+  }
+}
+
+/* This style only applies to screens smaller than 600px */
+@media (max-width: 800px) {
+  input {
+    width: 60%;
+  }
+
+  table {
+    width: 95%;
+  }
+}
+
+/* Big smartphones (portrait) (ie: Galaxy 3 has 360)*/
+@media only screen and (max-width: 640px) {
+  input {
+    width: 65%;
+  }
+}
+
+/* Smartphones (portrait) (ie: Galaxy 1) */
+@media only screen and (max-width: 400px) {
+  input {
+    width: 60%;
   }
 }
