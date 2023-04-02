@@ -2,6 +2,18 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## How to run the application
+
+This application is a simple web app that fetches some dummy todo tasks from [jsonplaceholder](https://jsonplaceholder.typicode.com/todos) and displays them.
+
+> To run the application, you need to first clone the repository or download a zip version
+> Navigate to the project directory in your terminal to be able to run the application's commands
+> First make sure you have your node dependency manager installed: either [NPM](http://npmjs.com) or [Yarn](http://yarnpkg.com) (recommended)
+> You can now install the project dependencies using either of these commands: `npm install` or `yarn install`;
+> Once installtion is complete, next is to run the app using `yarn start` or `npm start`
+
+The above steps should launch the application in your default browser.
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -44,4 +56,5 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
 # ReactTodo
