@@ -10,7 +10,11 @@ type ListProps = {
   sortHandler: (column: string) => void;
 };
 
-const tableHeaderData: { [key: string]: string } = { ID: 'id', Name: 'title', Status: 'completed' };
+const tableHeaderData: { [key: string]: string } = {
+  ID: 'id',
+  Name: 'title',
+  Status: 'completed',
+};
 
 const List: FC<PropsWithoutRef<ListProps>> = ({
   data,
@@ -26,6 +30,7 @@ const List: FC<PropsWithoutRef<ListProps>> = ({
             {key}
           </th>
         ))}
+        <th>Delete</th>
       </tr>
     </thead>
     <tbody>
