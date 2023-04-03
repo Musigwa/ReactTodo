@@ -1,16 +1,14 @@
-import { TiDelete } from 'react-icons/ti';
-import { BsCheck2Circle } from 'react-icons/bs';
-import { RiCheckboxBlankCircleLine } from 'react-icons/ri';
-import './App.css';
-import { useEffect, useMemo, useState } from 'react';
-import { Todo } from './interfaces';
+import { FC, PropsWithoutRef, useEffect, useMemo, useState } from 'react';
 import { Circles } from 'react-loader-spinner';
+import './App.css';
+import List from './components/List';
+import { Todo } from './interfaces';
 import { capitalize } from './utils';
 
 const baseUrl = 'https://jsonplaceholder.typicode.com/todos';
 const headers = { 'Content-type': 'application/json; charset=UTF-8' };
 
-const App = () => {
+const App: FC<PropsWithoutRef<{}>> = () => {
   const [title, setTitle] = useState<string>('');
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(false);
@@ -149,50 +147,12 @@ const App = () => {
           Add Todo
         </button>
       </header>
-      <table data-testid='todo-list'>
-        <thead>
-          <tr>
-            <th onClick={() => handleSort('id')}>ID</th>
-            <th onClick={() => handleSort('title')}>Name</th>
-            <th onClick={() => handleSort('completed')}>Status</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        {getSortedData().map(({ completed, id, title }, index) => {
-          return (
-            <tbody>
-              <tr key={`${index}${id}`}>
-                <td style={{ textDecoration: completed ? 'line-through' : 'none' }}>{id}</td>
-                <td style={{ textDecoration: completed ? 'line-through' : 'none' }}>
-                  {capitalize(title)}
-                </td>
-                <td>
-                  {completed ? (
-                    <BsCheck2Circle
-                      className={`completed button`}
-                      size={25}
-                      onClick={() => markTodoAsCompleted(id)}
-                    />
-                  ) : (
-                    <RiCheckboxBlankCircleLine
-                      className={`button`}
-                      size={25}
-                      onClick={() => markTodoAsCompleted(id)}
-                    />
-                  )}
-                </td>
-                <td>
-                  <TiDelete
-                    size={25}
-                    className={`delete-btn button`}
-                    onClick={() => deleteTodo(id)}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          );
-        })}
-      </table>
+      <List
+        data={getSortedData()}
+        completedHandler={markTodoAsCompleted}
+        deleteHandler={deleteTodo}
+        sortHandler={handleSort}
+      />
     </div>
   );
 };
